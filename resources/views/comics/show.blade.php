@@ -4,9 +4,17 @@
     <div class="detailesMain">
         <div class="container-sm my-container px-5">
             <img class="card-comic" src="{{ $comic['thumb'] }}" alt="">
-            <a class="text-decoration-none" href="{{ route('comics.edit', $comic->id) }}">
-                <div class="my-btn">Modify Comic</div>
-            </a>
+            <div class="d-flex">
+                <a class="text-decoration-none" href="{{ route('comics.edit', $comic->id) }}">
+                    <button class="my-btn">Modify Comic</button>
+                </a>
+                <form class="mx-3" action="{{ route('comics.destroy', $comic->id) }}" method="post">
+                    @csrf
+                    @method('DELETE')
+
+                    <button class="my-btn bg-danger" type="submit">Delete Comic</button>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-9 my-pt-24">
 
