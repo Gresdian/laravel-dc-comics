@@ -29,7 +29,10 @@ class ComicController extends Controller
      */
     public function create()
     {
-        //
+        $navLinks = config('nav_links');
+        $footerArr = config('footer_arr');
+
+        return view('comics.create', compact('footerArr', 'navLinks'));
     }
 
     /**
@@ -40,7 +43,31 @@ class ComicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $form_data = $request->validate([
+            'title'         => 'required|string|max:50',
+            'description'   => 'required|string',
+            'thumb'         => 'required|string',
+            'price'         => 'required|string|max:10',
+            'series'        => 'required|string|max:50',
+            'sale_date'     => 'required|date',
+            'type'          => 'required|string|max:50',
+            'artists'       => 'required',
+            'writers'       => 'required',
+        ]);
+
+        $comic = new Comic();
+        $comic->title = $form_data['title'];
+        $comic->description = $form_data['description'];
+        $comic->thumb = $form_data['thumb'];
+        $comic->price = $form_data['price'];
+        $comic->series = $form_data['series'];
+        $comic->sale_date = $form_data['sale_date'];
+        $comic->type = $form_data['type'];
+        $comic->artists = json_encode(explode(',', $form_data['artists']));
+        $comic->writers = json_encode(explode(',', $form_data['writers']));
+        $comic->save();
+
+        return redirect()->route('comics.index');
     }
 
     /**
@@ -51,11 +78,12 @@ class ComicController extends Controller
      */
     public function show(Comic $comic)
     {
-
+        $navLinks = config('nav_links');
+        $footerArr = config('footer_arr');
         $artists = json_decode($comic['artists']);
         $writers = json_decode($comic['writers']);
 
-        return view('comics.show', compact('comic', 'artists', 'writers'));
+        return view('comics.show', compact('footerArr', 'navLinks', 'comic', 'artists', 'writers'));
     }
 
     /**
@@ -64,9 +92,12 @@ class ComicController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Comic $comic)
     {
-        //
+        $navLinks = config('nav_links');
+        $footerArr = config('footer_arr');
+
+        return view('comics.edit', compact('footerArr', 'navLinks', 'comic'));
     }
 
     /**
@@ -78,7 +109,31 @@ class ComicController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $form_data = $request->validate([
+            'title'         => 'required|string|max:50',
+            'description'   => 'required|string',
+            'thumb'         => 'required|string',
+            'price'         => 'required|string|max:10',
+            'series'        => 'required|string|max:50',
+            'sale_date'     => 'required|date',
+            'type'          => 'required|string|max:50',
+            'artists'       => 'required',
+            'writers'       => 'required',
+        ]);
+
+        $comic = Comic::find($id);
+        $comic->title = $form_data['title'];
+        $comic->description = $form_data['description'];
+        $comic->thumb = $form_data['thumb'];
+        $comic->price = $form_data['price'];
+        $comic->series = $form_data['series'];
+        $comic->sale_date = $form_data['sale_date'];
+        $comic->type = $form_data['type'];
+        $comic->artists = json_encode(explode(',', $form_data['artists']));
+        $comic->writers = json_encode(explode(',', $form_data['writers']));
+        $comic->update();
+
+        return redirect()->route('comics.show', $id);
     }
 
     /**
